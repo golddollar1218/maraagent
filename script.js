@@ -7,11 +7,11 @@ const CONFIG = {
   // Optional: DexScreener pair address (overrides tokenAddress for chart)
   dexScreenerPair: "",
 
-  // uniswap coin page — auto-built from tokenAddress if left empty
+  // Uniswap swap page — auto-built from tokenAddress if left empty
   pumpFunUrl: "",
 
-  twitter: "https://x.com/maraagent_x",
-  telegram: "https://t.me/maraagent_tg",
+  twitter: "https://x.com/RobinhoodBrettX",
+  telegram: "https://t.me/robinhoodbrett",
 };
 
 const PLACEHOLDER_CA = "COMING_SOON — paste your token address in script.js";
@@ -22,10 +22,10 @@ function getChartId() {
 
 function getPumpFunUrl() {
   if (CONFIG.pumpFunUrl) return CONFIG.pumpFunUrl;
-  if (CONFIG.tokenAddress && CONFIG.tokenAddress !== "0xa60e66882239447662bb9773391478e7682e0d40") {
-    return `https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=${CONFIG.tokenAddress}&chain=robinhood`;
+  if (CONFIG.tokenAddress) {
+    return `https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=${CONFIG.tokenAddress}&chain=mainnet`;
   }
-  return "https://app.uniswap.org/swap?inputCurrency=ETH&chain=robinhood";
+  return "https://app.uniswap.org/swap?inputCurrency=ETH&chain=mainnet";
 }
 
 function buildDexScreenerEmbedUrl(id) {
@@ -37,12 +37,12 @@ function buildDexScreenerEmbedUrl(id) {
     info: "0",
     chartLeftToolbar: "0",
     chartDefaultOnMobile: "1",
-    chartTheme: "light",
+    chartTheme: "dark",
     chartStyle: "1",
     chartType: "usd",
     interval: "15",
   });
-  return `https://dexscreener.com/robinhood/${id}?${params.toString()}`;
+  return `https://dexscreener.com/ethereum/${id}?${params.toString()}`;
 }
 
 function initContract() {
@@ -90,18 +90,19 @@ function initChart() {
   if (!chartId) {
     iframe.classList.add("hidden");
     placeholder.classList.remove("hidden");
-    link.href = "https://dexscreener.com/robinhood";
-    link.textContent = "Browse Robinhood Chain pairs on DexScreener →";
+    link.href = "https://dexscreener.com/ethereum";
+    link.textContent = "Browse Ethereum pairs on DexScreener →";
     return;
   }
 
   iframe.src = buildDexScreenerEmbedUrl(chartId);
-  link.href = `https://dexscreener.com/robinhood/${chartId}`;
+  link.href = `https://dexscreener.com/ethereum/${chartId}`;
 }
 
 function initNav() {
   const toggle = document.querySelector(".nav-toggle");
   const links = document.querySelector(".nav-links");
+  const header = document.querySelector(".site-header");
 
   toggle.addEventListener("click", () => {
     const open = links.classList.toggle("open");
@@ -114,6 +115,12 @@ function initNav() {
       toggle.setAttribute("aria-expanded", "false");
     });
   });
+
+  const onScroll = () => {
+    header.classList.toggle("scrolled", window.scrollY > 24);
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
 }
 
 function initSocialLinks() {
@@ -132,9 +139,34 @@ function initSocialLinks() {
   });
 }
 
+function initReveals() {
+  const nodes = document.querySelectorAll(".reveal");
+  if (!nodes.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    nodes.forEach((el) => el.classList.add("in"));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.16, rootMargin: "0px 0px -40px 0px" }
+  );
+
+  nodes.forEach((el) => io.observe(el));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initContract();
   initChart();
   initNav();
   initSocialLinks();
+  initReveals();
 });
