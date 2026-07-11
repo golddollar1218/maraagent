@@ -2,7 +2,7 @@
 //  CONFIG — Update these when your token launches
 // ─────────────────────────────────────────────
 const CONFIG = {
-  tokenAddress: "0x19f9c01b856f340cf18ec619982f338eaac6b3c8",
+  tokenAddress: "0xa60e66882239447662bb9773391478e7682e0d40",
 
   // Optional: DexScreener pair address (overrides tokenAddress for chart)
   dexScreenerPair: "",
@@ -22,7 +22,7 @@ function getChartId() {
 
 function getPumpFunUrl() {
   if (CONFIG.pumpFunUrl) return CONFIG.pumpFunUrl;
-  if (CONFIG.tokenAddress && CONFIG.tokenAddress !== "0x19f9c01b856f340cf18ec619982f338eaac6b3c8") {
+  if (CONFIG.tokenAddress && CONFIG.tokenAddress !== "0xa60e66882239447662bb9773391478e7682e0d40") {
     return `https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=${CONFIG.tokenAddress}&chain=robinhood`;
   }
   return "https://app.uniswap.org/swap?inputCurrency=ETH&chain=robinhood";
